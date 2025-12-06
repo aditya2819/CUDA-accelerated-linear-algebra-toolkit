@@ -122,21 +122,22 @@ nvcc -o cgSolver.exe cgSolverMain.cu cgSolver.cu sparseMatMul.cu denseMatMul.cu 
 
 ### Sparse Matrix Multiplication Results
 
-**Small Matrix (500×500, 4,955 non-zeros): RTX 4070 Laptop, CUDA 13**
+**Large Matrix (5000×5000, ~99,899 non-zeros): RTX 4070 Laptop, CUDA 13**
 
 | Implementation      | Time (ms) | Performance (GFLOPS) | Speedup vs cuSPARSE |
 |---------------------|-----------|----------------------|---------------------|
-| Basic               | 0.008     | 1.2                  | 3.1×                |
-| Cache-optimized     | 0.011     | 0.9                  | 2.3×                |
-| Vectorized-safe     | 0.013     | 0.8                  | 2.0×                |
-| Shared-memory       | 0.015     | 0.6                  | 1.7×                |
-| Prefetch            | 0.012     | 0.8                  | 2.1×                |
-| Adaptive            | 0.015     | 0.7                  | 1.8×                |
-| Warp-reduction      | 0.017     | 0.6                  | 1.5×                |
-| Ultimate            | 0.016     | 0.6                  | 1.6×                |
-| cuSPARSE (baseline) | 0.026     | 0.382                | 1.0×                |
+| Warp-reduction      | 0.010     | 20.8                 | 3.4×                |
+| Vectorized-safe     | 0.010     | 20.8                 | 3.4×                |
+| Ultimate            | 0.010     | 20.0                 | 3.2×                |
+| Basic               | 0.010     | 19.4                 | 3.1×                |
+| Shared-memory       | 0.011     | 18.3                 | 3.0×                |
+| Adaptive            | 0.012     | 16.2                 | 2.6×                |
+| Prefetch            | 0.013     | 15.8                 | 2.6×                |
+| Cache-optimized     | 0.015     | 13.8                 | 2.2×                |
+| cuSPARSE (baseline) | 0.032     | 6.167                | 1.0×                |
 
 **Notes:**
+- Larger matrices reduce launch/setup dominance; optimized kernels and cuSPARSE both trend toward bandwidth limits.
 - Correctness check now uses a magnitude-scaled tolerance (~8 ULPs) to avoid false failures on large-magnitude sums.
 
 ### Conjugate Gradient Solver Results
