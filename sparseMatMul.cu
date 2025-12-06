@@ -400,18 +400,22 @@ void testCorrectness(void (*launchFunc)(const int*, const int*, const float*, co
     CUDA_CHECK(cudaMemcpy(result.data(), d_y, num_rows * sizeof(float), cudaMemcpyDeviceToHost));
     bool correct = true;
     float max_error = 0.0f;
+    float max_rel_error = 0.0f;
     for (int i = 0; i < num_rows; i++) {
-        float error = std::abs(reference[i] - result[i]);
-        max_error = std::max(max_error, error);
-        if (error > 1e-1f) {
+        float ref = reference[i];
+        float err = std::abs(ref - result[i]);
+        float ulp_scaled_tol = std::max(1e-3f, 8.0f * std::abs(ref) * FLT_EPSILON); // allow ~8 ULPs at large magnitudes
+        max_error = std::max(max_error, err);
+        max_rel_error = std::max(max_rel_error, err / std::max(std::abs(ref), 1.0f));
+        if (err > ulp_scaled_tol) {
             correct = false;
-            break;
+            break; // early exit once failure is detected
         }
     }
     if (correct) {
-        cout << kernelName << " PASSED (max error: " << max_error << ")" << endl;
+        cout << kernelName << " PASSED (max error: " << max_error << ", max rel error: " << max_rel_error << ")" << endl;
     } else {
-        cout << kernelName << " FAILED (max error: " << max_error << ")" << endl;
+        cout << kernelName << " FAILED (max error: " << max_error << ", max rel error: " << max_rel_error << ")" << endl;
     }
 }
 

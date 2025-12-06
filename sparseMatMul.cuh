@@ -14,6 +14,7 @@
 #include <functional>
 #include <numeric>
 #include <cmath>
+#include <cfloat>
 
 using namespace std;
 using namespace std::chrono;
