@@ -122,15 +122,22 @@ nvcc -o cgSolver.exe cgSolverMain.cu cgSolver.cu sparseMatMul.cu denseMatMul.cu 
 
 ### Sparse Matrix Multiplication Results
 
-**Small Matrix (500×500, 4,955 non-zeros):**
+**Small Matrix (500×500, 4,955 non-zeros): RTX 4070 Laptop, CUDA 13**
 
 | Implementation      | Time (ms) | Performance (GFLOPS) | Speedup vs cuSPARSE |
-|--------------------|-----------|---------------------|-------------------|
-| Basic              | 0.013     | 0.8                | 3.0x              |
-| Warp-reduction     | 0.013     | 0.8                | 3.0x              |
-| Prefetch           | 0.013     | 0.8                | 3.0x              |
-| Adaptive           | 0.013     | 0.8                | 3.0x              |
-| cuSPARSE           | 0.040     | 0.251              | 1.0x (baseline)   |
+|---------------------|-----------|----------------------|---------------------|
+| Basic               | 0.008     | 1.2                  | 3.1×                |
+| Cache-optimized     | 0.011     | 0.9                  | 2.3×                |
+| Vectorized-safe     | 0.013     | 0.8                  | 2.0×                |
+| Shared-memory       | 0.015     | 0.6                  | 1.7×                |
+| Prefetch            | 0.012     | 0.8                  | 2.1×                |
+| Adaptive            | 0.015     | 0.7                  | 1.8×                |
+| Warp-reduction      | 0.017     | 0.6                  | 1.5×                |
+| Ultimate            | 0.016     | 0.6                  | 1.6×                |
+| cuSPARSE (baseline) | 0.026     | 0.382                | 1.0×                |
+
+**Notes:**
+- Correctness check now uses a magnitude-scaled tolerance (~8 ULPs) to avoid false failures on large-magnitude sums.
 
 ### Conjugate Gradient Solver Results
 
